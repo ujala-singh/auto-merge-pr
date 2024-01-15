@@ -25,10 +25,11 @@ jobs:
           node-version: '14'
 
       - name: Add Approved label
-        if: success()
         run: |
           pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
           gh pr edit $pr_number --add-label "approved"
+        env:
+          GH_TOKEN: ${{ secrets.MY_PAT }}
 
       - name: Auto Merge Approved PR
         run: |
@@ -41,3 +42,5 @@ jobs:
           else
             echo "PR has not been approved."
           fi
+        env:
+          GH_TOKEN: ${{ secrets.MY_PAT }}
