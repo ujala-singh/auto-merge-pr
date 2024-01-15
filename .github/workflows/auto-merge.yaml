@@ -13,7 +13,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.MY_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Check GitHub CLI version
@@ -29,18 +29,28 @@ jobs:
           pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
           gh pr edit $pr_number --add-label "approved"
         env:
-          GH_TOKEN: ${{ secrets.MY_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Auto Merge Approved PR
         run: |
-          pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
-          approvals=$(gh pr review-list $pr_number --json state,author --jq '[.[] | select(.state == "APPROVED").author]')
+          pr_number=${{ github.event.pull_request.number }}
+          approvals=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.owner }}/${{ github.repository }}/pulls/${pr_number}/reviews" | \
+            jq -r '.[] | select(.state == "APPROVED").user.login')
 
           if [[ -n "$approvals" ]]; then
-            echo "PR has been approved, merging..."
-            gh pr merge $pr_number --auto --squash --delete-branch
+            for user in $approvals; do
+              # Check if the user is a code owner for the modified files
+              if gh pr review $pr_number --json event,html_url --jq \
+                '.[] | select(.user.login == $user and .state == "APPROVED") | .html_url' \
+                --arg user "$user" | grep -qFf - <(gh pr diff $pr_number --json changes --jq '.changes[].blob_url'); then
+                echo "PR has been approved by code owner, merging..."
+                gh pr merge $pr_number --auto --squash --delete-branch
+                break
+              fi
+            done
           else
             echo "PR has not been approved."
           fi
         env:
-          GH_TOKEN: ${{ secrets.MY_PAT }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}g
