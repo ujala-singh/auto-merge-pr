@@ -33,14 +33,23 @@ jobs:
 
       - name: Auto Merge Approved PR
         run: |
-          pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
-          approvals=$(gh pr review-list $pr_number --json state,author --jq '[.[] | select(.state == "APPROVED").author]')
+          pr_number=${{ github.event.pull_request.number }}
+          review_users=$(gh pr view ${pr_number} --json reviews | jq -r '.reviews[].author.login')
+          # Fetch CODEOWNERS file content
+          CODEOWNERS_CONTENT=$(curl -s "https://api.github.com/repos${{ github.owner }}/${{ github.repository }}/contents/.github/CODEOWNERS" | jq -r '.content' | base64 -d)
 
-          if [[ -n "$approvals" ]]; then
-            echo "PR has been approved, merging..."
-            gh pr merge $pr_number --auto --squash --delete-branch
-          else
-            echo "PR has not been approved."
+          if [[ -n "$review_users" ]]; then
+            for user in $review_users; do
+              echo "Checking code owner for reviewer: $user"
+              # Check if the reviewer is a code owner
+              if echo "$CODEOWNERS_CONTENT" | grep -q "$user"; then
+                echo "PR has been approved by code owner, merging..."
+                gh pr merge $pr_number --auto --squash --delete-branch
+                break  # Exit the loop if any reviewer is a code owner
+              else
+                echo "Reviewer $user is not a code owner."
+              fi
+            done
           fi
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
