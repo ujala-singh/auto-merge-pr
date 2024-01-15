@@ -6,8 +6,6 @@ on:
       - main
     types:
       - submitted
-    branches:
-      - main
 
 jobs:
   auto_merge:
