@@ -2,6 +2,8 @@ name: Auto Merge Approved PR
 
 on:
   pull_request_review:
+    branches:
+      - main
     types:
       - submitted
 
