@@ -9,7 +9,6 @@ jobs:
   create_main_branch_pr:
     runs-on: ubuntu-latest
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.MY_PAT }}
