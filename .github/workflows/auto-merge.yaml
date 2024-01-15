@@ -35,7 +35,7 @@ jobs:
         run: |
           pr_number=${{ github.event.pull_request.number }}
           approvals=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.owner }}/${{ github.repository }}/pulls/${pr_number}/reviews" | \
+            "https://api.github.com/repos${{ github.owner }}/${{ github.repository }}/pulls/${pr_number}/reviews" | \
             jq -r '.[] | select(.state == "APPROVED").user.login')
 
           if [[ -n "$approvals" ]]; then
