@@ -1,0 +1,43 @@
+name: Auto Merge Approved PR
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  auto_merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          fetch-depth: 0
+
+      - name: Check GitHub CLI version
+        run: gh --version
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Add Approved label
+        if: success()
+        run: |
+          pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
+          gh pr edit $pr_number --add-label "approved"
+
+      - name: Auto Merge Approved PR
+        run: |
+          pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
+          approvals=$(gh pr review-list $pr_number --json state,author --jq '[.[] | select(.state == "APPROVED").author]')
+
+          if [[ -n "$approvals" ]]; then
+            echo "PR has been approved, merging..."
+            gh pr merge $pr_number --auto --squash --delete-branch
+          else
+            echo "PR has not been approved."
+          fi
