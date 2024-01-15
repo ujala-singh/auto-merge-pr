@@ -26,6 +26,9 @@ jobs:
       - name: Fetch latest changes
         run: git fetch origin main
 
+      - name: Pull latest changes
+        run: git pull origin main
+
       - name: Create Main Branch PR
         run: |
           echo "Starting workflow..."
