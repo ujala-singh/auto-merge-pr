@@ -13,7 +13,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.DISPATCH_TOKEN }}
+          token: ${{ secrets.MY_PAT }}
           fetch-depth: 0
 
       - name: Check GitHub CLI version
