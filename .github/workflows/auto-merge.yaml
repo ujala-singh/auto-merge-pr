@@ -10,7 +10,7 @@ on:
 jobs:
   auto_merge:
     runs-on: ubuntu-latest
-
+    if: github.event.pull_request.base.ref == 'main'
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
