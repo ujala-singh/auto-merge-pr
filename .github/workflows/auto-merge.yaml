@@ -2,10 +2,10 @@ name: Auto Merge Approved PR
 
 on:
   pull_request_review:
-    types:
-      - submitted
     branches:
       - main
+    types:
+      - submitted
 
 jobs:
   auto_merge:
