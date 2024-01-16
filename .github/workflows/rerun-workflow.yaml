@@ -35,12 +35,12 @@ jobs:
             const { GITHUB_TOKEN } = process.env
             const { Octokit } = require("@octokit/rest");
             const octokit = new Octokit({
-              auth: process.env.GITHUB_TOKEN
+              auth: ${GITHUB_TOKEN}
             });
             const workflowName = 'Auto Merge Approved PR';
             const response = await octokit.rest.actions.reRunWorkflow({
-              owner: github.context.repo.owner,
-              repo: github.context.repo.repo,
+              owner: github.context.repository_owner,
+              repo: github.context.repository,
               run_id: ${{ github.event.workflow_run.id }},
             });
 
