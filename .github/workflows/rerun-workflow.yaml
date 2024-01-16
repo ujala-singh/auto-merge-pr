@@ -32,10 +32,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            const { GITHUB_TOKEN } = process.env
             const { Octokit } = require("@octokit/rest");
             const octokit = new Octokit({
-              auth: ${GITHUB_TOKEN}
+              auth: process.env.GITHUB_TOKEN
             });
             const workflowName = 'Auto Merge Approved PR';
             const response = await octokit.rest.actions.reRunWorkflow({
