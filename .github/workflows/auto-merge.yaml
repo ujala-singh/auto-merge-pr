@@ -51,11 +51,6 @@ jobs:
               fi
             done
           fi
-        
-      - name: Run git diff with Correct Branches
-        run: |
-          git checkout staging
-          git diff main..staging
       
       - name: Rebase "staging" onto "main"
         run: |
