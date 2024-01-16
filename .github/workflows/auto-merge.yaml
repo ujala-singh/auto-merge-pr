@@ -61,6 +61,7 @@ jobs:
         run: |
           git checkout staging
           git rebase main
+          git push origin staging --force
  
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
