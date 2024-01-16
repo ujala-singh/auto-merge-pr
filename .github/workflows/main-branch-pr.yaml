@@ -23,10 +23,14 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
       
       - name: Fetch latest changes
-        run: git fetch origin main
+        run: git fetch origin
 
       - name: Pull latest changes
-        run: git pull --rebase origin main
+        run: |
+          git checkout staging
+          git pull origin staging
+          git checkout main
+          git pull origin main
 
       - name: Create Main Branch PR
         run: |
@@ -43,10 +47,13 @@ jobs:
             # Create a new branch for the main branch, including the PR number
             git checkout -b main-branch-update-from-staging-pr-${PR_NUMBER} origin/main
 
-            # Fetch the changes from the closed pull request
-            echo "Fetching changes from PR #$PR_NUMBER..."
-            git fetch origin pull/${PR_NUMBER}/head:${PR_NUMBER}-pr-changes
-            git merge ${PR_NUMBER}-pr-changes
+            # Fetch the changes from the 'staging' branch
+            echo "Fetching changes from 'staging'..."
+            git fetch origin staging:staging
+
+            # Merge 'staging' into the new branch
+            echo "Merging changes from 'staging' into the new branch..."
+            git merge staging
             
             # Push the changes to the repository
             echo "Pushing the changes to main-branch-update-from-staging-pr-${PR_NUMBER}..."
