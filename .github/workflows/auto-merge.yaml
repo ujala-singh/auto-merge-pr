@@ -24,6 +24,11 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
       - name: Add Approved label
         run: |
           pr_number=$(gh pr view ${{ github.event.pull_request.number }} --json number --jq '.number')
@@ -51,12 +56,15 @@ jobs:
               fi
             done
           fi
-      
-      - name: Rebase "staging" onto "main"
-        run: |
-          git checkout staging
-          git rebase main
-          git push origin staging --force
- 
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
+ 
+      - name: Rebase "staging" onto "main"
+        run: |
+          git checkout main
+          git pull origin main   # Make sure your local 'main' is up to date with the remote
+          git checkout staging
+          git fetch origin      # Make sure your remote tracking branches are up to date
+          git branch --set-upstream-to=origin/staging staging   # Set up tracking branch
+          git rebase main
+          git push origin staging --force
