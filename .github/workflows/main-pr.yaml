@@ -1,0 +1,42 @@
+name: Create Main PR
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  create-main-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.MY_PAT }}
+          fetch-depth: 0
+
+      - name: Check GitHub CLI version
+        run: gh --version
+
+      - name: Set up Git
+        run: |
+          # Set up Git configuration
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Create Main PR
+        run: |
+          # Create a new branch for the main branch PR
+          git checkout -b main-pr-branch
+
+          # Apply changes from staging to the new branch
+          git merge origin/main
+
+          # Push the new branch to the repository
+          git push origin main-pr-branch
+
+          # Create a pull request
+          gh pr create --base main --head main-pr-branch --title "Merge Staging to Main" --body "Automatically created PR from staging to main."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MY_PAT }}
