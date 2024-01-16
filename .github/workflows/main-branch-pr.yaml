@@ -8,8 +8,13 @@ on:
 jobs:
   create_main_branch_pr:
     runs-on: ubuntu-latest
-    if: ${{ github.event.pull_request.merged == 'true' }} && ${{ github.event.pull_request.base.ref == 'staging' }}
+    if: ${{ github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'staging' }}
     steps:
+      - name: Debugging
+        run: |
+          echo "Merged: ${{ github.event.pull_request.merged }}"
+          echo "Base Ref: ${{ github.event.pull_request.base.ref }}"
+
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.MY_PAT }}
