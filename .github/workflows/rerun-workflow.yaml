@@ -2,37 +2,18 @@ name: Rerun Failed Workflow
 
 on:
   workflow_run:
-    workflows: ["Auto Merge Approved PR"]
+    workflows:
+      - "Auto Merge Approved PR"
     types:
       - completed
 
 jobs:
   rerun:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - name: Check Workflow Status
-        id: check_workflow
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const workflowName = 'Auto Merge Approved PR';
-            const runId = github.event.workflow_run.id;
-            const status = github.event.workflow_run.conclusion;
-
-            core.setOutput('status', status);
-            core.setOutput('runId', runId);
-
-            if (status === 'failure' || status === 'cancelled') {
-              return `The ${workflowName} workflow has failed or was cancelled. Rerunning...`;
-            } else {
-              return `The ${workflowName} workflow was successful. No need to rerun.`;
-            }
-
       - name: Rerun Workflow
         id: rerun_workflow
-        if: steps.check_workflow.outputs.status == 'failure' || steps.check_workflow.outputs.status == 'cancelled'
         uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +22,7 @@ jobs:
             const response = await octokit.rest.actions.reRunWorkflow({
               owner: github.context.repo.owner,
               repo: github.context.repo.repo,
-              run_id: steps.check_workflow.outputs.runId,
+              run_id: ${{ github.event.workflow_run.id }},
             });
 
             if (response.status === 201) {
