@@ -2,8 +2,6 @@ name: Auto Merge Approved PR
 
 on:
   pull_request_review:
-    branches:
-      - main
     types:
       - submitted
 
@@ -53,5 +51,16 @@ jobs:
               fi
             done
           fi
+        
+      - name: Run git diff with Correct Branches
+        run: |
+          git checkout staging
+          git diff main..staging
+      
+      - name: Rebase "staging" onto "main"
+        run: |
+          git checkout staging
+          git rebase main
+ 
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
