@@ -8,7 +8,7 @@ on:
 jobs:
   auto_merge:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.base.ref == 'main'
+    if: ${{ github.event.pull_request.base.ref == 'main' && github.event.review.state == 'approved' }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -59,12 +59,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
  
-      # - name: Rebase "staging" onto "main"
-      #   run: |
-      #     git checkout main
-      #     git pull origin main   # Make sure your local 'main' is up to date with the remote
-      #     git checkout staging
-      #     git fetch origin      # Make sure your remote tracking branches are up to date
-      #     git branch --set-upstream-to=origin/staging staging   # Set up tracking branch
-      #     git rebase main
-      #     git push origin staging --force
+      - name: Rebase "staging" onto "main"
+        if: github.event.pull_request.merged == true
+        run: |
+          git checkout main
+          git pull origin main   # Make sure your local 'main' is up to date with the remote
+          git checkout staging
+          git fetch origin      # Make sure your remote tracking branches are up to date
+          git branch --set-upstream-to=origin/staging staging   # Set up tracking branch
+          git rebase main
+          git push origin staging --force
