@@ -58,6 +58,11 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
+
+      - name: Sleep for 10 seconds
+        run: |
+          echo "Merging might take few seconds, hence we are sleeping for 10 seconds."
+          sleep 10
  
       - name: Rebase "staging" onto "main"
         if: github.event.pull_request.merged == true
