@@ -83,7 +83,7 @@ jobs:
           echo "status=$MERGED" >> $GITHUB_OUTPUT
 
       - name: Rebase "staging" onto "main"
-        if: steps.merge_status.outputs.status == true
+        if: steps.merge_status.outputs.status == 'true'
         run: |
           git checkout main
           git pull origin main   # Make sure your local 'main' is up to date with the remote
