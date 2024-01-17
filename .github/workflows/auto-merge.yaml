@@ -59,29 +59,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
 
-      - name: Check if PR is merged
-        id: merge_status
-        run: |
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_STATE="${{ github.event.pull_request.state }}"
-
-          if [ "$PR_STATE" == "closed" ]; then
-            MERGED=$(curl -s -X GET -H "Authorization: Bearer ${{ secrets.MY_PAT }}" \
-              "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" | \
-              jq -r '.merged')
-
-            if [ "$MERGED" == "true" ]; then
-              echo "PR #$PR_NUMBER has been merged."
-            else
-              echo "PR #$PR_NUMBER was closed without merging."
-            fi
-            echo "status=$MERGED" >> $GITHUB_OUTPUT
-          else
-            echo "This is not a closed pull request."
-          fi
- 
+  rebase_staging:
+    needs: auto_merge
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
       - name: Rebase "staging" onto "main"
-        if: steps.merge_status.outputs.status == true
         run: |
           git checkout main
           git pull origin main   # Make sure your local 'main' is up to date with the remote
