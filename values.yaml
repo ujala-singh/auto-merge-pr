@@ -1,12 +1,12 @@
 service1:
   image:
-    repository: ghcr.io/atlanhq/service1-main
-    tag: 9de7d25abcd
+    repository: ghcr.io/atlanhq/service1-staging
+    tag: 9de7d25abfj
 service2:
   image:
-    repository: ghcr.io/atlanhq/service2-main
-    tag: 9de7d25acde
+    repository: ghcr.io/atlanhq/service2-staging
+    tag: 9de7d25acop
 service3:
   image:
-    repository: ghcr.io/atlanhq/service3-main
-    tag: 9de7d25azhd
+    repository: ghcr.io/atlanhq/service3-staging
+    tag: 9de7d25azeu
