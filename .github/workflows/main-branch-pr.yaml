@@ -38,6 +38,10 @@ jobs:
           git checkout main
           git pull origin main
 
+      - name: Skip charts/values.yaml changes
+        run: git rm --cached values.yaml
+        working-directory: .
+
       - name: Create Main Branch PR
         run: |
           echo "Starting workflow..."
