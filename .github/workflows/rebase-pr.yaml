@@ -40,7 +40,7 @@ jobs:
         if: steps.rebase_pr.outcome == 'failure'
         run: |
           # Get the PR number
-          PR_NUMBER=$(echo "${{ github.event_path }}" | jq -r .number)
+          PR_NUMBER="${{ github.event.pull_request.number }}"
 
           # Add your comment using gh
           gh pr comment $PR_NUMBER --body "Your PR is not correctly rebased with ${{ github.event.pull_request.base.ref }} base branch.
