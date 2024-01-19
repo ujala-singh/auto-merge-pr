@@ -58,7 +58,8 @@ jobs:
 
           # Merge 'staging' into the new branch
           echo "Merging changes from 'staging' into the new branch..."
-          git merge staging
+          git config --global merge.ours.driver true
+          git merge --strategy=ours staging
           
           # Push the changes to the repository
           echo "Pushing the changes to main-branch-update-from-staging-pr-${PR_NUMBER}..."
