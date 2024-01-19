@@ -46,6 +46,9 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           git checkout -b main-branch-update-from-staging-pr-${PR_NUMBER}
 
+      - name: Set git config
+        run: git config --global merge.ours.driver true
+
       - name: Merge Changes from 'staging'
         run: git merge staging
 
