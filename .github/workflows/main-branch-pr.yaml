@@ -60,6 +60,9 @@ jobs:
           echo "Merging changes from 'staging' into the new branch..."
           # Temporarily checkout 'staging' excluding values.yaml
           git checkout staging -- ':!values.yaml'
+
+          # Commit the merged changes
+          git commit -m "Merge changes from 'staging' (PR #$PR_NUMBER)"
           
           # Push the changes to the repository
           echo "Pushing the changes to main-branch-update-from-staging-pr-${PR_NUMBER}..."
