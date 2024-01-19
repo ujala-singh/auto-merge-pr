@@ -39,7 +39,7 @@ jobs:
           git pull origin main
 
       - name: Skip charts/values.yaml changes
-        run: git rm --cached values.yaml
+        run: git update-index --assume-unchanged values.yaml
         working-directory: .
 
       - name: Create Main Branch PR
