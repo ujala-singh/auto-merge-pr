@@ -1,0 +1,31 @@
+name: Sync Branches
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync_branches:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so job can access it
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.my_pat }}
+          fetch-depth: 0
+      
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Rebase "staging" onto "main"
+        run: |
+          git checkout main
+          git pull origin main   # Make sure local 'main' is up to date with the remote
+          git checkout staging
+          git fetch origin      # Make sure remote tracking branches are up to date
+          git branch --set-upstream-to=origin/staging staging   # Set up tracking branch
+          git rebase -Xtheirs main
+          git push origin staging --force
