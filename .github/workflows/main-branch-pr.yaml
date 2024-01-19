@@ -46,9 +46,11 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
           git checkout -b main-branch-update-from-staging-pr-${PR_NUMBER}
 
-      - name: Merge Changes from 'staging'
-        run: git merge staging
-
+      - name: Merge Changes from 'staging' excluding values.yaml
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          git merge --strategy-option=ours staging
+          
       - name: Push Changes to the Repository
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
