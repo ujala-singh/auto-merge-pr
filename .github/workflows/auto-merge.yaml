@@ -101,6 +101,5 @@ jobs:
           git checkout staging
           git fetch origin      # Make sure your remote tracking branches are up to date
           git branch --set-upstream-to=origin/staging staging   # Set up tracking branch
-          # Skip values.yaml during rebase
-          git rebase -Xtheirs main
+          git rebase main
           git push origin staging --force
