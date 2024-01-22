@@ -70,7 +70,7 @@ jobs:
           
           # Create a pull request with the PR number in the title
           echo "Creating the PR to main branch with branch name as main-branch-update-from-staging-pr-${PR_NUMBER}..."
-          gh pr create --base main --head main-branch-update-from-staging-pr-${PR_NUMBER} --title "Merge changes from 'staging' to 'main' (PR #$PR_NUMBER)" --body "This PR includes changes from staging PR: $PR_URL"
+          gh pr create --base main --head main-branch-update-from-staging-pr-${PR_NUMBER} --title "Merge changes from 'staging' to 'main' (PR #$PR_NUMBER) $PR_URL" --template .github/pull_request_template.md
           echo "Workflow completed successfully."
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
