@@ -27,11 +27,4 @@ Changes tested on
 - [ ] [MABL Tests Link]() (if any)
 - [ ] [Successful Workflow Links]() (if any)
 
-
-
 ---
-
-_For linking linear tickets with the PR, mention the ticket id in any one of these - PR title, feature branch name, or PR comment_
-
-
-_* Make sure to delete any irrelevant statements or points to keep the template clean during PR review (like this one)_
