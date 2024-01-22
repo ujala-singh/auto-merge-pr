@@ -38,15 +38,6 @@ jobs:
           git checkout main
           git pull origin main
 
-      - name: Read PR template
-        id: read_pr_template
-        run: |
-          PR_TEMPLATE_FILE=".github/pull_request_template.md"
-          if [ -f "$PR_TEMPLATE_FILE" ]; then
-            cat "$PR_TEMPLATE_FILE" > pr_template.txt
-          fi
-        shell: /usr/bin/bash -e {0}
-
       - name: Create Main Branch PR
         run: |
           echo "Starting workflow..."
@@ -76,11 +67,6 @@ jobs:
           # Push the changes to the repository
           echo "Pushing the changes to main-branch-update-from-staging-pr-${PR_NUMBER}..."
           git push origin main-branch-update-from-staging-pr-${PR_NUMBER}
-
-          # Create an environment file with the PR template content
-          if [ -f pr_template.txt ]; then
-            echo "PR_TEMPLATE_CONTENT=$(cat pr_template.txt)" > env_file
-          fi
           
           # Create a pull request with the PR number in the title
           echo "Creating the PR to main branch with branch name as main-branch-update-from-staging-pr-${PR_NUMBER}..."
