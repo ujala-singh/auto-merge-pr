@@ -19,7 +19,7 @@ jobs:
       - name: Read PR template file
         id: read_template
         run: |
-          PR_TEMPLATE_FILE=".github/PULL_REQUEST_TEMPLATE.md"  # Update with your template file path
+          PR_TEMPLATE_FILE=".github/pull_request_template.md"
           if [ -f "$PR_TEMPLATE_FILE" ]; then
             echo "::set-output name=template::$(cat "$PR_TEMPLATE_FILE")"
           fi
