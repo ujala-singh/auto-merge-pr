@@ -4,11 +4,6 @@ echo "Starting workflow..."
 
 PR_NUMBER="$1"
 PR_URL="$2"
-BODY_FILE="$(create_body_file "$PR_NUMBER" "$PR_URL")"
-
-create_main_branch_pr "$PR_NUMBER" "$BODY_FILE"
-
-cleanup_temp_files "$BODY_FILE"
 
 echo "Workflow completed successfully."
 
@@ -77,3 +72,7 @@ cleanup_temp_files() {
   local TEMP_FILE="$1"
   rm "$TEMP_FILE"
 }
+
+BODY_FILE="$(create_body_file "$PR_NUMBER" "$PR_URL")"
+create_main_branch_pr "$PR_NUMBER" "$BODY_FILE"
+cleanup_temp_files "$BODY_FILE"
