@@ -17,10 +17,16 @@ jobs:
       - name: Read PR template file
         id: read_template
         run: |
-          PR_TEMPLATE_FILE=".github/pull_request_template.md"
+          PR_TEMPLATE_FILE=".github/pull_request_template.md"  # Update with your template file path
           if [ -f "$PR_TEMPLATE_FILE" ]; then
-            echo "template=$(cat "$PR_TEMPLATE_FILE")" >> $GITHUB_OUTPUT
+            echo "::set-output name=template::$(cat "$PR_TEMPLATE_FILE")"
+          else
+            echo "::set-output name=template::"
           fi
+
+      - name: Display template content
+        run: |
+          echo "Template: ${{ steps.read_template.outputs.template }}"
 
       - name: Check and Update PR Body
         id: check_and_update
