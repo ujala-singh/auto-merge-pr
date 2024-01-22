@@ -1,0 +1,45 @@
+name: Check PR Template
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  check_pr_template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR Template
+        uses: actions/checkout@v2
+
+      - name: Read PR template file
+        id: read_template
+        run: |
+          PR_TEMPLATE_FILE=".github/PULL_REQUEST_TEMPLATE.md"  # Update with your template file path
+          if [ -f "$PR_TEMPLATE_FILE" ]; then
+            echo "template=$(cat "$PR_TEMPLATE_FILE")" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check and Update PR Body
+        id: check_and_update
+        run: |
+          PR_BODY_FILE=$(mktemp)
+          PR_NUMBER=$(jq -r .pull_request.number "$GITHUB_EVENT_PATH")
+          gh pr view "$PR_NUMBER" --json body --template "{{.body}}" > "$PR_BODY_FILE"
+          
+          PR_BODY=$(cat "$PR_BODY_FILE")
+          PR_TEMPLATE="${{ steps.read_template.outputs.template }}"
+
+          # Check if the PR body includes the template content
+          if [[ ! "$PR_BODY" =~ "$PR_TEMPLATE" ]]; then
+            # Add template content to the top of the PR body
+            NEW_PR_BODY="$PR_TEMPLATE$PR_BODY"
+            echo "$NEW_PR_BODY" > "$PR_BODY_FILE"
+            gh pr edit "$PR_NUMBER" --body-file "$PR_BODY_FILE"
+            echo "Updated PR body with missing template fields."
+          fi
+
+      - name: Cleanup
+        run: rm -f "$PR_BODY_FILE"
