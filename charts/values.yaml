@@ -1,7 +1,7 @@
 service1:
   image:
     repository: ghcr.io/atlanhq/service1-main
-    tag: 9de7d25abcd
+    tag: 7c8c8b20da6f
 service2:
   image:
     repository: ghcr.io/atlanhq/service2-main
@@ -9,7 +9,7 @@ service2:
 service3:
   image:
     repository: ghcr.io/atlanhq/service3-main
-    tag: 9de7d25azhd
+    tag: f1c6708307bd
 service4:
   image:
     repository: ghcr.io/atlanhq/service4-main
