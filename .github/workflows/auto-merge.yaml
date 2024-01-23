@@ -93,8 +93,8 @@ jobs:
           fi
           echo "status=$MERGED" >> $GITHUB_OUTPUT
 
-      - name: Rebase "staging" onto "main"
-        if: steps.merge_status.outputs.status == 'true'
+      - name: Rebase "staging" onto "main" when direct push happens to staging
+        if: ${{ steps.merge_status.outputs.status == 'true' && github.event.pull_request.base.ref == 'main-branch-update-from-values-yaml' }}
         run: |
           git checkout main
           # Make sure your local 'main' is up to date with the remote
@@ -109,4 +109,18 @@ jobs:
           git checkout --ours charts/values.yaml
           git add charts/values.yaml
           git rebase --continue
+          git push origin staging --force
+
+      - name: Rebase "staging" onto "main"
+        if: ${{ steps.merge_status.outputs.status == 'true' && github.event.pull_request.base.ref != 'main-branch-update-from-values-yaml' }}
+        run: |
+          git checkout main
+          # Make sure your local 'main' is up to date with the remote
+          git pull origin main
+          git checkout staging
+          # Make sure your remote tracking branches are up to date
+          git fetch origin
+          # Set up tracking branch
+          git branch --set-upstream-to=origin/staging staging
+          git rebase main
           git push origin staging --force
