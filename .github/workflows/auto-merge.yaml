@@ -73,6 +73,11 @@ jobs:
     needs: auto_merge
     runs-on: ubuntu-latest
     steps:
+      - name: Debugging
+        run: |
+          echo "PR Number: ${{ needs.auto_merge.outputs.pr_number }}"
+          echo "Head Ref: ${{ needs.auto_merge.outputs.pr_head_ref }}"
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
         with:
@@ -112,7 +117,7 @@ jobs:
           git branch --set-upstream-to=origin/staging staging
           git rebase main
           #Accept Changes From main
-          git checkout --ours charts/values.yaml
+          git checkout --ours ./charts/values.yaml
           git add charts/values.yaml
           git rebase --continue
           git push origin staging --force
