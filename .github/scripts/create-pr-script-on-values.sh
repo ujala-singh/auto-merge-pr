@@ -2,13 +2,8 @@
 
 echo "Starting workflow..."
 
-PR_NUMBER="$1"
-PR_URL="$2"
-
 # Function to create the body content and save it to a file
 create_body_file() {
-  local PR_NUMBER="$1"
-  local PR_URL="$2"
   local BODY_FILE="$(mktemp)"
 
   cat <<EOF > "$BODY_FILE"
@@ -16,8 +11,9 @@ create_body_file() {
 
 Summarise your changes in points
 
-- This PR includes changes from staging PR: $PR_URL"
--
+- This PR includes changes from charts/values.yaml file.
+- Image Tags are being updated.
+- 
 
 ## Type of change
 
@@ -48,21 +44,17 @@ EOF
 
 # Function to create the main branch PR
 create_main_branch_pr() {
-  local PR_NUMBER="$1"
-  local BODY_FILE="$2"
-
   # Switch to the 'main' branch
   git checkout main
-  # Create a new branch for the main branch, including the PR number
-  git checkout -b main-branch-update-from-staging-pr-${PR_NUMBER} origin/main
+  git checkout -b main-branch-update-from-values-yaml origin/main
   echo "Fetching changes from 'staging'..."
   git fetch origin staging:staging
   echo "Merging changes from 'staging' into the new branch..."
   git merge staging
-  echo "Pushing the changes to main-branch-update-from-staging-pr-${PR_NUMBER}..."
-  git push origin main-branch-update-from-staging-pr-${PR_NUMBER}
-  echo "Creating the PR to main branch with branch name as main-branch-update-from-staging-pr-${PR_NUMBER}..."
-  gh pr create --base main --head main-branch-update-from-staging-pr-${PR_NUMBER} --title "Merge changes from 'staging' to 'main' (PR #$PR_NUMBER)" --body "$(cat $BODY_FILE)"
+  echo "Pushing the changes to main-branch-update-from-values-yaml..."
+  git push origin main-branch-update-from-values-yaml
+  echo "Creating the PR to main branch with branch name as main-branch-update-from-values-yaml..."
+  gh pr create --base main --head main-branch-update-from-values-yaml --title "Merge changes from 'staging' to 'main' (Update Image Tags)" --body "$(cat $BODY_FILE)"
 }
 
 # Function to clean up temporary files
@@ -71,8 +63,8 @@ cleanup_temp_files() {
   rm "$TEMP_FILE"
 }
 
-BODY_FILE="$(create_body_file "$PR_NUMBER" "$PR_URL")"
-create_main_branch_pr "$PR_NUMBER" "$BODY_FILE"
+BODY_FILE="$(create_body_file)"
+create_main_branch_pr
 cleanup_temp_files "$BODY_FILE"
 
 echo "Workflow completed successfully."
