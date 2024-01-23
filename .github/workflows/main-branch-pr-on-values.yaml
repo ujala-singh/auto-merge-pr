@@ -1,4 +1,4 @@
-name: Create Main Branch PR
+name: Create Main Branch PR On Push To charts/values.yaml
 
 on:
   push:
