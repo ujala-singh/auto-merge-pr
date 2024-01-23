@@ -11,6 +11,7 @@ jobs:
     if: ${{ github.event.pull_request.base.ref == 'main' && github.event.review.state == 'approved' }}
     outputs:
       pr_number: ${{ steps.auto_merge_pr.outputs.pr_number }}
+      pr_head_ref: ${{ steps.head_ref.outputs.pr_head_ref }}
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
@@ -63,6 +64,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.MY_PAT }}
 
+      - name: Output Head Ref
+        id: head_ref
+        run: |
+          echo "pr_head_ref=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT 
+
   rebase_staging:
     needs: auto_merge
     runs-on: ubuntu-latest
@@ -94,7 +100,7 @@ jobs:
           echo "status=$MERGED" >> $GITHUB_OUTPUT
 
       - name: Rebase "staging" onto "main" when direct push happens to staging
-        if: ${{ steps.merge_status.outputs.status == 'true' && github.event.pull_request.base.ref == 'main-branch-update-from-values-yaml' }}
+        if: ${{ steps.merge_status.outputs.status == 'true' && needs.auto_merge.outputs.pr_head_ref == 'main-branch-update-from-values-yaml' }}
         run: |
           git checkout main
           # Make sure your local 'main' is up to date with the remote
@@ -112,7 +118,7 @@ jobs:
           git push origin staging --force
 
       - name: Rebase "staging" onto "main"
-        if: ${{ steps.merge_status.outputs.status == 'true' && github.event.pull_request.base.ref != 'main-branch-update-from-values-yaml' }}
+        if: ${{ steps.merge_status.outputs.status == 'true' && needs.auto_merge.outputs.pr_head_ref != 'main-branch-update-from-values-yaml' }}
         run: |
           git checkout main
           # Make sure your local 'main' is up to date with the remote
