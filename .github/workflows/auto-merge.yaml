@@ -103,24 +103,25 @@ jobs:
             echo "PR #$PR_NUMBER was closed without merging or not closed yet."
           fi
           echo "status=$MERGED" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Rebase "staging" onto "main" when direct push happens to staging
         if: ${{ steps.merge_status.outputs.status == 'true' && needs.auto_merge.outputs.pr_head_ref == 'main-branch-update-from-values-yaml' }}
         run: |
           git checkout main
-          # Make sure your local 'main' is up to date with the remote
           git pull origin main
           git checkout staging
-          # Make sure your remote tracking branches are up to date
           git fetch origin
-          # Set up tracking branch
           git branch --set-upstream-to=origin/staging staging
           git rebase main
-          #Accept Changes From main
-          git checkout --ours ./charts/values.yaml
+          # Accept Changes From main during the rebase
+          export GIT_SEQUENCE_EDITOR=: && git checkout --ours ./charts/values.yaml
           git add charts/values.yaml
+          # Continue with the rebase
           git rebase --continue
+          # Force push the changes to staging
           git push origin staging --force
+        shell: bash
 
       - name: Rebase "staging" onto "main"
         if: ${{ steps.merge_status.outputs.status == 'true' && needs.auto_merge.outputs.pr_head_ref != 'main-branch-update-from-values-yaml' }}
@@ -135,3 +136,4 @@ jobs:
           git branch --set-upstream-to=origin/staging staging
           git rebase main
           git push origin staging --force
+        shell: bash
