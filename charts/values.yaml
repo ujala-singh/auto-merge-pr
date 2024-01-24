@@ -9,7 +9,7 @@ service2:
 service3:
   image:
     repository: ghcr.io/atlanhq/service3-main
-    tag: 9ff3608f78b2
+    tag: 779a77dba2d3
 service4:
   image:
     repository: ghcr.io/atlanhq/service4-main
