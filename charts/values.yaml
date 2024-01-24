@@ -13,4 +13,4 @@ service3:
 service4:
   image:
     repository: ghcr.io/atlanhq/service4-main
-    tag: d05b44498d09
+    tag: 216102333bea
