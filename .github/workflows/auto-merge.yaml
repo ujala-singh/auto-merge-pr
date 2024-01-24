@@ -103,6 +103,7 @@ jobs:
             echo "PR #$PR_NUMBER was closed without merging or not closed yet."
           fi
           echo "status=$MERGED" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: Rebase "staging" onto "main" when direct push happens to staging
         if: ${{ steps.merge_status.outputs.status == 'true' && needs.auto_merge.outputs.pr_head_ref == 'main-branch-update-from-values-yaml' }}
