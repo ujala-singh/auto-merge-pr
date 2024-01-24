@@ -113,12 +113,8 @@ jobs:
           git checkout staging
           git fetch origin
           git branch --set-upstream-to=origin/staging staging
-          git rebase main
           # Accept Changes From main during the rebase
-          export GIT_SEQUENCE_EDITOR=: && git checkout --ours ./charts/values.yaml
-          git add charts/values.yaml
-          # Continue with the rebase
-          git rebase --continue
+          git rebase -Xours main
           # Force push the changes to staging
           git push origin staging --force
         shell: bash
